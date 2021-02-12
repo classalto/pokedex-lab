@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import request from 'superagent';
 import PokemonData from 'data.js';
+import Dropdown from 'Dropdown.js';
 
 export default class SearchPage extends Component {
     state = {
@@ -67,7 +68,7 @@ export default class SearchPage extends Component {
                 Search for:
                 <input value={this.state.search} onChange={this.handleSearchChange}/>
                 <Dropdown filteredList={this.filterList} onChange={this.handleFilterChange} keyName={"Sort By"}/>
-                <Dropdown filteredList={this.filterList} onChange={this.handleFilterDirection} keyName={'Order By'}/>
+                <Dropdown filteredList={this.filterDirection} onChange={this.handleFilterDirection} keyName={'Order By'}/>
                 <PokeResult filteredList={filteredPokemon}/>
             </div>
         )
