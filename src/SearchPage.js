@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
-import request from 'superagent';
-import PokemonData from 'data.js';
-import Dropdown from 'Dropdown.js';
+import PokemonData from './data.js';
+import Dropdown from './Dropdown.js';
 
 export default class SearchPage extends Component {
     state = {
