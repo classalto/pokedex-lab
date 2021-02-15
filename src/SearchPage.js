@@ -1,14 +1,13 @@
 import React, { Component } from 'react'
 import PokemonData from './data.js';
-import Dropdown from './Dropdown.js';
+import PokeList from './Components/PokeList.js';
 
 export default class SearchPage extends Component {
     state = {
         pokemon: PokemonData,
-        filterList: ['pokemon', 'speed', 'type1', 'attack', 'defense'],
-        filterDirection: ['ascending', 'descending'],
+        sortBy: 'pokemon',
+        filterDirection: 'ascending',
         selectedFilter: '',
-        search: ''
     }
 
     // track search input onchange
@@ -19,7 +18,7 @@ export default class SearchPage extends Component {
     }
 
     // track filter selection on change
-    handleFilterChange = (e) => {
+    handleSortBy = (e) => {
         this.setState({
             selectedFilter: e.target.value
         })
@@ -32,43 +31,49 @@ export default class SearchPage extends Component {
         })
     }
 
-    sortBy = () => {
-        if (this.state.selectedFilter === '' || this.state.filterDirection === '') return;
-
-        if (this.state.selectedFilter === "attack" || this.state.selectedFilter === "defense" || this.state.selectedFilter === "hp") {
-            if (this.state.filterDirection === 'ascending') {
-                this.state.pokemon.sort((a, b) => a[this.state.selectedFilter] - b[this.state.selectedFilter])
-            } else {
-                this.state.pokemon.sort((a, b) => b[this.state.selectedFilter] - a[this.state.selectedFilter])
-            }
-        } else {
-            if (this.state.filterDirection === 'ascending') {
-                this.state.pokemon.sort((a, b) => a[this.state.selectedFilter].localeCompare(b[this.state.selectedFilter]))
-            } else {
-                this.state.pokemon.sort((a, b) => b[this.state.selectedFilter].localeCompare(a[this.state.selectedFilter]))
-            }
-        }
-    }
-    filterArray = () => {
-        if(this.state.selectedFilter === '') return this.state.pokemon;
-        const filteredArr = this.state.pokemon.filter(monster => {
-            if (monster.pokemon === this.state.search) return true;
-        })
-        return filteredArr;
-    }
-
+      
     render() {
-        
-        this.sortBy();
-        const filteredPokemon = this.filterArray();
+        // sort pokemon by filter if ascending
+        if (this.state.filterDirection === 'ascending') {
+            this.state.pokemon.sort(
+                (a, b) => a[this.state.sortBy].localeCompare(b[this.state.sortby])
+            );
+        }
+        // sort pokemon by filter if descending
+        if (this.state.filterDirection === 'descending') {
+            this.state.pokemon.sort(
+                (a, b) => b[this.state.sortBy].localeCompare(a[this.state.sortBy])
+            );
+        }
+
+        // filter pokemon by selected filter
+        const filteredPokeData = this.state.pokemon.filter(monster => monster.pokemon.includes(this.state.selectedFilter))
 
         return (
-            <div>
-                Search for:
-                <input value={this.state.search} onChange={this.handleSearchChange}/>
-                <Dropdown filteredList={this.filterList} onChange={this.handleFilterChange} keyName={"Sort By"}/>
-                <Dropdown filteredList={this.filterDirection} onChange={this.handleFilterDirection} keyName={'Order By'}/>
-                <PokeResult filteredList={filteredPokemon}/>
+            <div className="sidebar">
+                <section className="category">
+                    <p>Sorting Category:</p>
+                    <select>
+                        <option value="name">Name</option>
+                        <option value="ability-one">Ability</option>
+                        <option value="type-one">Type</option>
+                        <option value="shape">Shape</option>
+                    </select>
+                </section>
+                <section className="order">
+                    <p>Order By:</p>
+                    <select>
+                        <option value="ascending">Ascending</option>
+                        <option value="descending">Descending</option>
+                    </select>
+                </section>
+                <section className="search">
+                    <p>Find a Pokemon</p>
+                    <input type="text" onChange={this.handleSearchChange} placeholder="Pokemon Name"/>
+                </section>
+                <section>
+                    <PokeList filteredPokeData={filteredPokeData}/>
+                </section>
             </div>
         )
     }
