@@ -7,15 +7,17 @@ import {
 import './App.css';
 import SearchPage from './SearchPage.js';
 import HomePage from './HomePage.js';
+import Header from './Components/Header.js';
 
 export default class App extends Component {
   render() {
     return (
       <div className="App">
         <Router>
+          <Header/>
           <Switch>
             <Route 
-              path="/Search/SearchPage.js" 
+              path="/SearchPage" 
               exact
               render={(routerProps) => <SearchPage {...routerProps} />} 
             />
