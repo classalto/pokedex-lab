@@ -7,7 +7,7 @@ export default class Header extends Component {
             <header>
                 <div></div>
                 <div>
-                    <h1>PokeDex</h1>
+                    <h1>Pokedex Search Tool</h1>
                 </div>
                 <nav>
                     <NavLink exact activeClassName="selected" to="/">Home</NavLink>
