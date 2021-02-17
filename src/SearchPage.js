@@ -8,43 +8,46 @@ export default class SearchPage extends Component {
         sortBy: 'pokemon',
         filterDirection: 'ascending',
         selectedFilter: '',
-        query: '',
+        query: 'c',
         loading: false,
     }
 
     componentDidMount = async () => {
-        await this.fetchPokemon
+        await this.fetchPokemon();
     }
     // track search input onchange
-    handleQueryChange = (e) => {
+    handleQueryChange =  (e) => {
         this.setState({
             query: e.target.value
         })
+        
+
+        
     }
     handleClick = async () => {
         await this.fetchPokemon();
     }
     // track filter selection on change
-    handleSortBy = (e) => {
+    handleSortBy = async (e) => {
         this.setState({
-            selectedFilter: e.target.value
+            sortBy: e.target.value
         })
+        await this.fetchPokemon();
     }
 
     // track filter direction onchange
-    handleFilterDirection = (e) => {
+    handleFilterDirection = async (e) => {
         this.setState({
             filterDirection: e.target.value
         })
+        await this.fetchPokemon();
     }
 
     fetchPokemon = async () => {
         this.setState({
             loading: true,
-            pokemon: [],
         })
-
-        const data = await request.get('https://pokedex-alchemy.herokuapp.com/api/pokedex')
+        const data = await request.get(`https://pokedex-alchemy.herokuapp.com/api/pokedex?sort=${this.state.sortBy}&direction=${this.state.filterDirection}&pokemon=${this.state.query}`)
 
         this.setState({
             pokemon: data.body.results,
@@ -58,16 +61,16 @@ export default class SearchPage extends Component {
                     <p>Sorting Category:</p>
                     <select onChange={this.handleSortBy}>
                         <option value="pokemon">Name</option>
-                        <option value="ability_1">Ability</option>
-                        <option value="type_1">Type</option>
+                        <option value="ability">Ability</option>
+                        <option value="type">Type</option>
                         <option value="shape">Shape</option>
                     </select>
                 </section>
                 <section className="order">
                     <p>Order By:</p>
                     <select onChange={this.handleFilterDirection}>
-                        <option value="ascending">Ascending</option>
-                        <option value="descending">Descending</option>
+                        <option value="asc">Ascending</option>
+                        <option value="desc">Descending</option>
                     </select>
                 </section>
                 <section className="search-component">
@@ -79,8 +82,13 @@ export default class SearchPage extends Component {
                 <section className="search-results">
                     {this.state.loading ? <Spinner/> : this.state.pokemon.map(monster => 
                         <div key={monster.pokebase}>
-                            <p>{monster.pokebase}</p>
+                            <h4>{monster.pokebase}</h4>
                             <img alt="pokemon" src={monster.url_image}/>
+                            <p>Primary type: {monster.type_1}</p>
+                            <p>Secondary type: {monster.type_2}</p>
+                            <p>Ability 1: {monster.ability_1}</p>
+                            <p>Ability 2: {monster.ability_2}</p>
+                            <p>{monster.shape}</p>
                         </div>
                     )}
                 </section>
