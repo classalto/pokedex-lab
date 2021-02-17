@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import request from 'superagent';
-import PokeList from './Components/PokeList.js';
 import Spinner from './Components/Spinner.js';
 
 export default class SearchPage extends Component {
@@ -17,12 +16,14 @@ export default class SearchPage extends Component {
         await this.fetchPokemon
     }
     // track search input onchange
-    handleSearchChange = (e) => {
+    handleQueryChange = (e) => {
         this.setState({
-            search: e.target.value
+            query: e.target.value
         })
     }
-
+    handleClick = async () => {
+        await this.fetchPokemon();
+    }
     // track filter selection on change
     handleSortBy = (e) => {
         this.setState({
@@ -50,13 +51,7 @@ export default class SearchPage extends Component {
             loading: false,
         })
     }
-
-
-      
     render() {
-        
-
-
         return (
             <div className="sidebar">
                 <section className="category">
@@ -77,12 +72,17 @@ export default class SearchPage extends Component {
                 </section>
                 <section className="search-component">
                     <p>Find a Pokemon</p>
-                    <input type="text" onChange={this.handleSearchChange} placeholder="Pokemon Name"/>
-                    <button onChange={this.getPokemon}>Search</button>
+                    <input type="text" onChange={this.handleQueryChange} placeholder="Pokemon Name"/>
+                    <button onClick={this.handleClick}>Get Pokemon!</button>
                 </section>
                 
                 <section className="search-results">
-                    {this.state.loading ? <Spinner/> : this.state.pokemon.map(monster => <PokeList pokeList={this.state.pokemon}/>)}
+                    {this.state.loading ? <Spinner/> : this.state.pokemon.map(monster => 
+                        <div key={monster.pokebase}>
+                            <p>{monster.pokebase}</p>
+                            <img alt="pokemon" src={monster.url_image}/>
+                        </div>
+                    )}
                 </section>
             </div>
         )
