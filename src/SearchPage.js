@@ -14,6 +14,9 @@ export default class SearchPage extends Component {
         loading: false,
         sortArray: ['name', 'ability', 'shape', 'type'],
         directionArray: ['asc', 'desc'],
+        totalPokemon: 0,
+        perPage: 10,
+        currentPage: 1,
     }
 
     componentDidMount = async () => {
@@ -29,6 +32,7 @@ export default class SearchPage extends Component {
         
     }
     handleClick = async () => {
+        await this.setState({ currentPage: 1 })
         await this.fetchPokemon();
     }
     // track filter selection on change
@@ -51,26 +55,51 @@ export default class SearchPage extends Component {
         this.setState({
             loading: true,
         })
-        const data = await request.get(`https://pokedex-alchemy.herokuapp.com/api/pokedex?sort=${this.state.sortBy}&direction=${this.state.filterDirection}&pokemon=${this.state.query}`)
+        const data = await request.get(`https://pokedex-alchemy.herokuapp.com/api/pokedex?pokemon=${this.state.query}&page=${this.state.currentPage}&perPage=${this.state.perPage}`)
 
         this.setState({
-            pokemon: data.body.results,
             loading: false,
+            pokemon: data.body.results,
+            totalPokemon: data.body.count,
         })
     }
+
+    handlePerPage = (e) => {
+        this.setState({ perPage: e.target.value })
+    }
+
+    handleNextClick = async () => {
+        await this.setState({
+            currentPage: this.state.currentPage + 1
+        });
+        await this.fetchPokemon();
+    }
+
+    handlePreviousClick = async () => {
+        await this.setState({
+            currentPage: this.state.currentPage - 1
+        });
+        await this.fetchPokemon();
+    }
     render() {
+        
+        const lastPage = Math.ceil(this.state.totalPokemon / this.state.perPage);
+
         return (
             <div className="sidebar">
+                
                 <Dropdown onChange={this.handleSortBy} options={this.state.sortArray}/>
                 <Dropdown onChange={this.handleFilterDirection} options={this.state.directionArray}/>
+                
                 <section className="search-component">
                     <p>Find a Pokemon</p>
                     <input type="text" onChange={this.handleQueryChange} placeholder="Pokemon Name"/>
                     <button onClick={this.handleClick}>Get Pokemon!</button>
                 </section>
-                
+                <button onClick={this.handlePreviousClick} disabled={this.state.currentPage === 1}>Next</button>
+                <button onClick={this.handleNextClick} disabled={this.state.currentPage === lastPage}>Previous</button>
                 <section className="search-results">
-                    {this.state.loading ? <Spinner/> : <PokeList pokemon={this.state.pokemon}/>}
+                    {this.state.loading ? <Spinner/> : <PokeList details={this.props.match.params.pokemonName} pokemon={this.state.pokemon}/>}
                 </section>
             </div>
         )

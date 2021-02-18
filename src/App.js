@@ -2,12 +2,13 @@ import React, {Component} from 'react';
 import {
   BrowserRouter as Router,
   Route,
-  Switch,
+  Switch
 } from 'react-router-dom';
 import './App.css';
 import SearchPage from './SearchPage.js';
 import HomePage from './HomePage.js';
 import Header from './Components/Header.js';
+import PokemonDetail from './Components/PokemonDetail.js';
 
 export default class App extends Component {
   render() {
@@ -21,6 +22,12 @@ export default class App extends Component {
               exact
               render={(routerProps) => <SearchPage {...routerProps} />} 
             />
+            <Route 
+              path="/PokemonDetail/:pokemonName" 
+              exact
+              render={(routerProps) => <PokemonDetail {...routerProps} />} 
+            />
+            
             <Route 
               path="/" 
               exact
